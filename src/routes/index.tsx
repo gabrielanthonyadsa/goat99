@@ -1,24 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { ArrowRight, ArrowDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { metadata } from '@/lib/goat/content';
+import campaign from '@/assets/maison-campaign.jpg';
+import tailoring from '@/assets/tailoring-editorial.jpg';
+import leather from '@/assets/leather-editorial.jpg';
+import jewelry from '@/assets/jewelry-editorial.jpg';
+export const Route=createFileRoute('/')({head:()=>metadata('La Maison','Découvrez GOAT’99, maison de mode et univers de luxe contemporain. Création et développement par Nuvex Technology.'),component:Index});
+function Index(){return <><section className="campaign"><img src={campaign} width={1920} height={1088} alt="Vision éditoriale GOAT’99 : silhouette de couture noire dans une galerie de pierre" fetchPriority="high"/><div className="campaign-copy"><div className="eyebrow">GOAT’99 · LUXURY HOUSE</div><h1>L’allure est<br/>une <em>signature.</em></h1><p>Un regard singulier. Une élégance sans compromis.<br/>Entrez dans l’univers GOAT’99.</p><div className="hero-actions"><Button variant="hero" asChild><Link to="/$page" params={{page:'collections'}}>DÉCOUVRIR LES COLLECTIONS <ArrowRight/></Link></Button><Button variant="editorial" asChild><Link to="/$page" params={{page:'maison'}}>L’ESPRIT DE LA MAISON <ArrowRight/></Link></Button></div></div><div className="campaign-caption"><span>MODE · CRÉATION · ART DE VIVRE</span><span>EXPLORER LA MAISON <ArrowDown size={12}/></span></div></section><section className="section"><div className="section-heading"><div><div className="eyebrow">LES EXPRESSIONS DE LA MAISON</div><h2>Un univers, mille nuances.</h2></div><Link className="text-link" to="/$page" params={{page:'collections'}}>Explorer les collections <ArrowRight size={15}/></Link></div><div className="universe-grid">{[{name:'Le vestiaire',sub:'L’élégance dans chaque ligne',image:tailoring,page:'collections'},{name:'La maroquinerie',sub:'Le caractère jusque dans le détail',image:leather,page:'collections'},{name:'La joaillerie',sub:'Une présence précieuse',image:jewelry,page:'joaillerie'}].map(item=><Link key={item.name} to="/$page" params={{page:item.page}} className="universe-item"><div className="universe-image"><img src={item.image} width={1024} height={1280} loading="lazy" alt={`Vision éditoriale : ${item.name}`}/></div><h3>{item.name}<ArrowRight size={18}/></h3><p>{item.sub}</p></Link>)}</div></section><section className="editorial-band"><div className="eyebrow">L’ESPRIT GOAT’99</div><h2>Au-delà de la mode.<br/>Une manière d’être.</h2><p>GOAT’99 réunit mode, création et art de vivre dans un même univers. Une invitation à affirmer son caractère, à cultiver sa singularité.</p><Link className="text-link" to="/$page" params={{page:'maison'}}>Rencontrer la Maison <ArrowRight size={15}/></Link></section><section className="section"><div className="section-heading"><div><div className="eyebrow">RENCONTRES & EXPÉRIENCES</div><h2>Les rendez-vous GOAT’99.</h2></div><Link className="text-link" to="/$page" params={{page:'evenements'}}>Les événements <ArrowRight size={15}/></Link></div><p className="text-muted-foreground leading-7">Les prochaines invitations de la Maison seront annoncées ici, après confirmation des événements.</p></section><section className="club-band"><div><div className="eyebrow">LE CERCLE GOAT’99</div><h2>Un autre regard sur l’exclusif.</h2><p>Un cercle privé au cœur de l’univers de la Maison.<br/>Exprimez votre intérêt pour GOAT’99 Club.</p></div><Button variant="hero" asChild><Link to="/club">DÉCOUVRIR LE CLUB <ArrowRight/></Link></Button></section></>}

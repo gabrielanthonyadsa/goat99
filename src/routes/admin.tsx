@@ -1,0 +1,9 @@
+import { createFileRoute,Link } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { useServerFn } from '@tanstack/react-start';
+import { getWorkspace } from '@/lib/goat/data.functions';
+import { useAccount } from '@/lib/goat/auth';
+import { Button } from '@/components/ui/button';
+import { metadata } from '@/lib/goat/content';
+export const Route=createFileRoute('/admin')({head:()=>metadata('Administration','Espace de gestion réservé aux équipes autorisées de GOAT’99.'),component:Admin});
+function Admin(){const {user}=useAccount();const load=useServerFn(getWorkspace);const workspace=useQuery({queryKey:['admin',user?.id],enabled:!!user,queryFn:()=>load()});return <><div className="page-intro"><div className="eyebrow">CENTRE DE CONTRÔLE</div><h1>GOAT’99 · Administration</h1></div><div className="account-layout">{!user?<div className="empty-state"><p>Connexion requise pour accéder à la gestion.</p><Button asChild><Link to="/auth">Se connecter</Link></Button></div>:workspace.isPending?<p>Vérification des autorisations…</p>:workspace.isError?<p role="alert">Accès réservé à l’équipe autorisée. Aucun rôle administrateur n’est attribué automatiquement.</p>:<><div className="admin-grid"><article>Produits<strong>{workspace.data.products.length}</strong></article><article>Événements<strong>{workspace.data.events.length}</strong></article><article>Candidatures au Club<strong>{workspace.data.members.length}</strong></article></div><h2>Événements</h2>{workspace.data.events.map(e=><div className="admin-list" key={e.id}><span>{e.title} · {e.event_date}</span><span>{e.status==='draft'?'Brouillon':e.status}</span></div>)}<p>Les outils de gestion détaillés, la billetterie et les paiements restent à mettre en service avant l’ouverture commerciale.</p></>}</div></>}

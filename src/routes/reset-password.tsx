@@ -1,0 +1,7 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { useState,useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { metadata } from '@/lib/goat/content';
+export const Route=createFileRoute('/reset-password')({head:()=>metadata('Nouveau mot de passe','Réinitialisez le mot de passe de votre compte GOAT’99.'),component:Reset});
+function Reset(){const [allowed,setAllowed]=useState(false);const [password,setPassword]=useState('');const [message,setMessage]=useState('');const [busy,setBusy]=useState(false);useEffect(()=>{const hash=new URLSearchParams(window.location.hash.slice(1));setAllowed(hash.get('type')==='recovery');},[]);return <div className="form-page"><h1>Nouveau mot de passe</h1>{allowed?<form onSubmit={async e=>{e.preventDefault();setBusy(true);const {error}=await supabase.auth.updateUser({password});setMessage(error?'Ce lien ne permet pas de modifier le mot de passe. Demandez un nouveau lien.':'Votre mot de passe a été mis à jour.');setBusy(false)}}><label>Nouveau mot de passe<input required minLength={8} type="password" autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)}/></label><Button type="submit" disabled={busy}>Enregistrer mon mot de passe</Button></form>:<p>Ouvrez le lien de réinitialisation reçu par e-mail pour définir votre nouveau mot de passe.</p>}{message&&<p role="status" className="status-message">{message}</p>}</div>}
