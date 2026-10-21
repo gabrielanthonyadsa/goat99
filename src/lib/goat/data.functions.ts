@@ -90,7 +90,7 @@ export const getWorkspace = createServerFn({ method: 'POST' })
   });
 
 type ProductInput = {
-  id?: string;
+  id?: string | undefined;
   name: string;
   slug: string;
   category: string;
@@ -127,7 +127,7 @@ export const deleteProduct = createServerFn({ method: 'POST' })
   });
 
 type EventInput = {
-  id?: string;
+  id?: string | undefined;
   title: string;
   description: string;
   event_date: string | null;
@@ -161,7 +161,7 @@ export const deleteEvent = createServerFn({ method: 'POST' })
   });
 
 type NewsInput = {
-  id?: string;
+  id?: string | undefined;
   title: string;
   slug: string;
   excerpt: string;
