@@ -18,6 +18,7 @@ import { Route as ClubRouteImport } from './routes/club'
 import { Route as CompteRouteImport } from './routes/compte'
 import { Route as ConfigurationAddsRouteImport } from './routes/configuration-adds'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ProduitSlugRouteImport } from './routes/produit.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProduitSlugRoute = ProduitSlugRouteImport.update({
+  id: '/produit/$slug',
+  path: '/produit/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/compte': typeof CompteRoute
   '/configuration-adds': typeof ConfigurationAddsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/produit/$slug': typeof ProduitSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/compte': typeof CompteRoute
   '/configuration-adds': typeof ConfigurationAddsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/produit/$slug': typeof ProduitSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/compte': typeof CompteRoute
   '/configuration-adds': typeof ConfigurationAddsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/produit/$slug': typeof ProduitSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/compte'
     | '/configuration-adds'
     | '/reset-password'
+    | '/produit/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/compte'
     | '/configuration-adds'
     | '/reset-password'
+    | '/produit/$slug'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/compte'
     | '/configuration-adds'
     | '/reset-password'
+    | '/produit/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   CompteRoute: typeof CompteRoute
   ConfigurationAddsRoute: typeof ConfigurationAddsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ProduitSlugRoute: typeof ProduitSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produit/$slug': {
+      id: '/produit/$slug'
+      path: '/produit/$slug'
+      fullPath: '/produit/$slug'
+      preLoaderRoute: typeof ProduitSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompteRoute: CompteRoute,
   ConfigurationAddsRoute: ConfigurationAddsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ProduitSlugRoute: ProduitSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
