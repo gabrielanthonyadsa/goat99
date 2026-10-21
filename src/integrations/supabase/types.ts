@@ -79,6 +79,42 @@ export type Database = {
           },
         ]
       }
+      news_posts: {
+        Row: {
+          content: string
+          created_at: string
+          excerpt: string
+          id: string
+          image_url: string | null
+          published_at: string | null
+          slug: string
+          status: string
+          title: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          published_at?: string | null
+          slug: string
+          status?: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           color: string | null
@@ -120,6 +156,7 @@ export type Database = {
           created_at: string
           currency: string
           description: string
+          featured: boolean
           id: string
           image_url: string | null
           name: string
@@ -132,6 +169,7 @@ export type Database = {
           created_at?: string
           currency: string
           description?: string
+          featured?: boolean
           id?: string
           image_url?: string | null
           name: string
@@ -144,6 +182,7 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string
+          featured?: boolean
           id?: string
           image_url?: string | null
           name?: string
