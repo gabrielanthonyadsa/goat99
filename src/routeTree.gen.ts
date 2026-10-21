@@ -11,7 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PageRouteImport } from './routes/$page'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BoutiqueRouteImport } from './routes/boutique'
+import { Route as ClubRouteImport } from './routes/club'
+import { Route as CompteRouteImport } from './routes/compte'
+import { Route as ConfigurationAddsRouteImport } from './routes/configuration-adds'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +29,122 @@ const PageRoute = PageRouteImport.update({
   path: '/$page',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoutiqueRoute = BoutiqueRouteImport.update({
   id: '/boutique',
   path: '/boutique',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClubRoute = ClubRouteImport.update({
+  id: '/club',
+  path: '/club',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompteRoute = CompteRouteImport.update({
+  id: '/compte',
+  path: '/compte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfigurationAddsRoute = ConfigurationAddsRouteImport.update({
+  id: '/configuration-adds',
+  path: '/configuration-adds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$page': typeof PageRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
   '/boutique': typeof BoutiqueRoute
+  '/club': typeof ClubRoute
+  '/compte': typeof CompteRoute
+  '/configuration-adds': typeof ConfigurationAddsRoute
+  '/reset-password': typeof ResetPasswordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$page': typeof PageRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
   '/boutique': typeof BoutiqueRoute
+  '/club': typeof ClubRoute
+  '/compte': typeof CompteRoute
+  '/configuration-adds': typeof ConfigurationAddsRoute
+  '/reset-password': typeof ResetPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$page': typeof PageRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
   '/boutique': typeof BoutiqueRoute
+  '/club': typeof ClubRoute
+  '/compte': typeof CompteRoute
+  '/configuration-adds': typeof ConfigurationAddsRoute
+  '/reset-password': typeof ResetPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$page' | '/boutique'
+  fullPaths:
+    | '/'
+    | '/$page'
+    | '/admin'
+    | '/auth'
+    | '/boutique'
+    | '/club'
+    | '/compte'
+    | '/configuration-adds'
+    | '/reset-password'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$page' | '/boutique'
-  id: '__root__' | '/' | '/$page' | '/boutique'
+  to:
+    | '/'
+    | '/$page'
+    | '/admin'
+    | '/auth'
+    | '/boutique'
+    | '/club'
+    | '/compte'
+    | '/configuration-adds'
+    | '/reset-password'
+  id:
+    | '__root__'
+    | '/'
+    | '/$page'
+    | '/admin'
+    | '/auth'
+    | '/boutique'
+    | '/club'
+    | '/compte'
+    | '/configuration-adds'
+    | '/reset-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PageRoute: typeof PageRoute
+  AdminRoute: typeof AdminRoute
+  AuthRoute: typeof AuthRoute
   BoutiqueRoute: typeof BoutiqueRoute
+  ClubRoute: typeof ClubRoute
+  CompteRoute: typeof CompteRoute
+  ConfigurationAddsRoute: typeof ConfigurationAddsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +163,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/boutique': {
       id: '/boutique'
       path: '/boutique'
       fullPath: '/boutique'
       preLoaderRoute: typeof BoutiqueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/club': {
+      id: '/club'
+      path: '/club'
+      fullPath: '/club'
+      preLoaderRoute: typeof ClubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compte': {
+      id: '/compte'
+      path: '/compte'
+      fullPath: '/compte'
+      preLoaderRoute: typeof CompteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuration-adds': {
+      id: '/configuration-adds'
+      path: '/configuration-adds'
+      fullPath: '/configuration-adds'
+      preLoaderRoute: typeof ConfigurationAddsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -88,7 +218,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PageRoute: PageRoute,
+  AdminRoute: AdminRoute,
+  AuthRoute: AuthRoute,
   BoutiqueRoute: BoutiqueRoute,
+  ClubRoute: ClubRoute,
+  CompteRoute: CompteRoute,
+  ConfigurationAddsRoute: ConfigurationAddsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
