@@ -4,6 +4,7 @@ import { ArrowLeft, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getProduct } from '@/lib/goat/data.functions';
 import { metadata } from '@/lib/goat/content';
+import { useCurrency } from '@/lib/goat/currency';
 
 const productQuery = (slug: string) =>
   queryOptions({ queryKey: ['product', slug], queryFn: () => getProduct({ data: { slug } }) });
@@ -37,12 +38,11 @@ export const Route = createFileRoute('/produit/$slug')({
 });
 
 function ProductPage() {
+  const { formatPrice } = useCurrency();
   const { slug } = Route.useParams();
   const { data: product } = useSuspenseQuery(productQuery(slug));
   if (!product) return null;
-  const price = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: product.currency }).format(
-    product.price_minor / 100,
-  );
+  const price = formatPrice(product.price_minor, product.currency);
   return (
     <>
       <div className="product-page">

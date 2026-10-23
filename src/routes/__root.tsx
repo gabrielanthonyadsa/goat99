@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import { AccountProvider } from "@/lib/goat/auth";
 import { SiteShell } from "@/components/goat/shell";
+import { CurrencyProvider } from '@/lib/goat/currency';
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -124,7 +125,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AccountProvider><SiteShell><Outlet /></SiteShell></AccountProvider>
+      <AccountProvider><CurrencyProvider><SiteShell><Outlet /></SiteShell></CurrencyProvider></AccountProvider>
     </QueryClientProvider>
   );
 }
