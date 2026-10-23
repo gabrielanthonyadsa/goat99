@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      collections: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           capacity: number | null
@@ -44,6 +65,30 @@ export type Database = {
           status?: string
           title?: string
           venue?: string | null
+        }
+        Relationships: []
+      }
+      homepage_campaign: {
+        Row: {
+          description: string
+          id: string
+          primary_label: string
+          secondary_label: string
+          title: string
+        }
+        Insert: {
+          description: string
+          id?: string
+          primary_label?: string
+          secondary_label?: string
+          title: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          primary_label?: string
+          secondary_label?: string
+          title?: string
         }
         Relationships: []
       }
