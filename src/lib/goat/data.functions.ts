@@ -2,6 +2,8 @@ import { createServerFn } from '@tanstack/react-start';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/integrations/supabase/types';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { z } from 'zod';
+import { defaultCampaign } from './content';
 
 type PublicClient = SupabaseClient<Database>;
 
@@ -79,14 +81,16 @@ export const getWorkspace = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await requireAdmin(context);
-    const [products, events, members, news] = await Promise.all([
+    const [products, events, members, news, campaign, collections] = await Promise.all([
       context.supabase.from('products').select('*').order('created_at', { ascending: false }),
       context.supabase.from('events').select('*').order('created_at', { ascending: false }),
       context.supabase.from('membership_applications').select('*').order('created_at', { ascending: false }),
       context.supabase.from('news_posts').select('*').order('created_at', { ascending: false }),
+      context.supabase.from('homepage_campaign').select('*').eq('id', 'main').maybeSingle(),
+      context.supabase.from('collections').select('*').order('created_at', { ascending: false }),
     ]);
-    if (products.error || events.error || members.error || news.error) throw new Error('Données indisponibles');
-    return { products: products.data, events: events.data, members: members.data, news: news.data };
+    if (products.error || events.error || members.error || news.error || campaign.error || collections.error) throw new Error('Données indisponibles');
+    return { products: products.data, events: events.data, members: members.data, news: news.data, campaign: campaign.data ?? defaultCampaign, collections: collections.data };
   });
 
 type ProductInput = {
@@ -210,3 +214,32 @@ export const setMembershipStatus = createServerFn({ method: 'POST' })
     if (error) throw new Error('Le statut n’a pas pu être mis à jour.');
     return { ok: true };
   });
+
+export const getHomepage = createServerFn({ method: 'GET' }).handler(async () => {
+ const client = publicClient();
+ const [campaign, collections] = await Promise.all([
+  client.from('homepage_campaign').select('title,description,primary_label,secondary_label').eq('id','main').maybeSingle(),
+  client.from('collections').select('id,title,status').eq('status','published'),
+ ]);
+ if(campaign.error || collections.error) throw new Error('Campagne indisponible');
+ return {campaign:campaign.data??defaultCampaign,collections:collections.data};
+});
+export const saveCampaign = createServerFn({method:'POST'})
+ .middleware([requireSupabaseAuth])
+ .inputValidator(input=>z.object({title:z.string().trim().min(1).max(100),description:z.string().trim().min(1).max(400),primary_label:z.string().trim().min(1).max(60),secondary_label:z.string().trim().min(1).max(60)}).parse(input))
+ .handler(async({data,context})=>{
+  await requireAdmin(context);
+  const {error}=await context.supabase.from('homepage_campaign').upsert({id:'main',...data});
+  if(error)throw new Error('La campagne n’a pas pu être enregistrée.');
+  return {ok:true};
+ });
+export const saveCollection = createServerFn({method:'POST'})
+ .middleware([requireSupabaseAuth])
+ .inputValidator(input=>z.object({id:z.string().uuid().optional(),title:z.string().trim().min(1).max(120),status:z.enum(['draft','published','archived'])}).parse(input))
+ .handler(async({data,context})=>{
+  await requireAdmin(context);
+  const {id,...fields}=data;
+  const {error}=id?await context.supabase.from('collections').update(fields).eq('id',id):await context.supabase.from('collections').insert(fields);
+  if(error)throw new Error('La collection n’a pas pu être enregistrée.');
+  return {ok:true};
+ });
