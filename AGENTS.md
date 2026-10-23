@@ -16,3 +16,5 @@
 - Public catalog reads use a server publishable client; private operations validate authentication and roles independently of UI.
 - Store staff roles separately from profiles and never auto-assign administrator privileges.
 - Keep catalog and commercial data empty until approved; generated editorial imagery is not merchandise.
+- Persist homepage editorial overrides and collection publication separately; use content-module defaults until an authorized editor saves them.
+- Share display currency across customer routes; convert XAF using its fixed EUR parity and USD using a current published rate, never invent a rate or change stored commercial prices.
