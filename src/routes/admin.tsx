@@ -16,6 +16,7 @@ import { useAccount } from '@/lib/goat/auth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { metadata } from '@/lib/goat/content';
+import { CampaignAdmin } from '@/components/goat/campaign-admin';
 
 export const Route = createFileRoute('/admin')({
   head: () => metadata('Administration', 'Espace de gestion réservé aux équipes autorisées de GOAT’99.'),
@@ -280,13 +281,14 @@ function Admin() {
   const setStatus = useServerFn(setMembershipStatus);
   const queryClient = useQueryClient();
   const workspace = useQuery({ queryKey: ['admin', user?.id], enabled: !!user, queryFn: () => load() });
-  const [tab, setTab] = useState<'produits' | 'evenements' | 'actualites' | 'club'>('produits');
+  const [tab, setTab] = useState<'produits' | 'evenements' | 'actualites' | 'club' | 'accueil'>('produits');
   const [editing, setEditing] = useState<string | null>(null); // 'new' ou id
   const refresh = () => {
     setEditing(null);
     queryClient.invalidateQueries({ queryKey: ['admin'] });
     queryClient.invalidateQueries({ queryKey: ['catalog'] });
     queryClient.invalidateQueries({ queryKey: ['news'] });
+    queryClient.invalidateQueries({ queryKey: ['homepage'] });
   };
 
   if (!user)
@@ -304,7 +306,7 @@ function Admin() {
       </div>
     );
 
-  const { products, events, members, news } = workspace.data;
+  const { products, events, members, news, campaign, collections } = workspace.data;
 
   return (
     <>
@@ -320,13 +322,14 @@ function Admin() {
           <article>Candidatures au Club<strong>{members.length}</strong></article>
         </div>
         <div className="account-tabs">
-          {([['produits', 'Produits'], ['evenements', 'Événements'], ['actualites', 'Actualités'], ['club', 'Club']] as const).map(([key, label]) => (
+          {([['accueil', 'Accueil'], ['produits', 'Produits'], ['evenements', 'Événements'], ['actualites', 'Actualités'], ['club', 'Club']] as const).map(([key, label]) => (
             <Button key={key} variant={tab === key ? 'default' : 'ghost'} onClick={() => { setTab(key); setEditing(null); }}>
               {label}
             </Button>
           ))}
         </div>
 
+        {tab === 'accueil' && <CampaignAdmin initial={campaign} collections={collections} onSaved={refresh} />}
         {tab === 'produits' && (
           <>
             <Button onClick={() => setEditing('new')}>Ajouter une pièce</Button>

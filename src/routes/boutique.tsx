@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { getCatalog } from '@/lib/goat/data.functions';
 import { metadata } from '@/lib/goat/content';
+import { useCurrency } from '@/lib/goat/currency';
 
 const catalog = queryOptions({ queryKey: ['catalog'], queryFn: () => getCatalog() });
 
 export const Route = createFileRoute('/boutique')({
+  validateSearch: (search: Record<string,unknown>) => ({vedettes: search.vedettes === true || search.vedettes === 'true'}),
   loader: ({ context }) => context.queryClient.ensureQueryData(catalog),
   head: () =>
     metadata(
@@ -18,6 +20,8 @@ export const Route = createFileRoute('/boutique')({
 });
 
 function Boutique() {
+  const { formatPrice } = useCurrency();
+  const { vedettes } = Route.useSearch();
   const { data } = useSuspenseQuery(catalog);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -26,13 +30,13 @@ function Boutique() {
   }, []);
   const products = data.filter(
     (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) && (category === 'all' || p.category === category),
+      p.name.toLowerCase().includes(search.toLowerCase()) && (category === 'all' || p.category === category) && (!vedettes || p.featured),
   );
   return (
     <>
       <div className="page-intro">
         <div className="eyebrow">LA SÉLECTION GOAT’99</div>
-        <h1>La Boutique</h1>
+        <h1>{vedettes ? 'Les articles en vedette' : 'La Boutique'}</h1>
         <p>Les expressions de la Maison, réunies en un même lieu.</p>
       </div>
       <div className="catalog-toolbar">
@@ -61,7 +65,7 @@ function Boutique() {
                 )}
                 <h2>{p.name}</h2>
                 <p>{p.description}</p>
-                <p>{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: p.currency }).format(p.price_minor / 100)}</p>
+                <p>{formatPrice(p.price_minor, p.currency)}</p>
               </article>
             </Link>
           ))}
@@ -69,7 +73,7 @@ function Boutique() {
       ) : (
         <div className="empty-state">
           <ShoppingBag size={28} />
-          <h2>{data.length ? 'Aucune pièce trouvée' : 'Le prochain chapitre se prépare.'}</h2>
+          <h2>{vedettes ? 'Aucun article en vedette pour le moment.' : data.length ? 'Aucune pièce trouvée' : 'Le prochain chapitre se prépare.'}</h2>
           <p>
             {data.length
               ? 'Essayez une autre recherche.'

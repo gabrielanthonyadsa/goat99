@@ -3,7 +3,9 @@ import { ArrowRight, ArrowDown } from 'lucide-react';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { metadata } from '@/lib/goat/content';
-import { getCatalog, getNews } from '@/lib/goat/data.functions';
+import { getCatalog, getNews, getHomepage } from '@/lib/goat/data.functions';
+import { useCurrency } from '@/lib/goat/currency';
+import { hasPublishedCollection } from '@/lib/goat/presentation';
 import campaign from '@/assets/maison-campaign.jpg';
 import tailoring from '@/assets/tailoring-editorial.jpg';
 import leather from '@/assets/leather-editorial.jpg';
@@ -11,11 +13,12 @@ import jewelry from '@/assets/jewelry-editorial.jpg';
 
 const catalog = queryOptions({ queryKey: ['catalog'], queryFn: () => getCatalog() });
 const news = queryOptions({ queryKey: ['news'], queryFn: () => getNews() });
+const homepage = queryOptions({ queryKey: ['homepage'], queryFn: () => getHomepage() });
 
 export const Route = createFileRoute('/')({
   loader: ({ context }) => {
     context.queryClient.prefetchQuery(news);
-    return context.queryClient.ensureQueryData(catalog);
+    return Promise.all([context.queryClient.ensureQueryData(catalog),context.queryClient.ensureQueryData(homepage)]);
   },
   head: () =>
     metadata(
@@ -25,10 +28,9 @@ export const Route = createFileRoute('/')({
   component: Index,
 });
 
-const formatPrice = (minor: number, currency: string) =>
-  new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(minor / 100);
-
 function Index() {
+  const { formatPrice } = useCurrency();
+  const { data: { campaign: copy, collections } } = useSuspenseQuery(homepage);
   const { data: products } = useSuspenseQuery(catalog);
   const { data: posts } = useSuspenseQuery(news);
   const featured = products.filter((p) => p.featured).slice(0, 4);
@@ -36,43 +38,30 @@ function Index() {
 
   return (
     <>
-      <section className="campaign">
-        <img
-          src={campaign}
-          width={1920}
-          height={1088}
-          alt="Vision éditoriale GOAT’99 : silhouette de couture noire dans une galerie de pierre"
-          fetchPriority="high"
-        />
+      <section className="campaign campaign-modern" aria-label="GOAT’99 — la campagne de la Maison">
         <div className="campaign-copy">
-          <div className="eyebrow">GOAT’99 · LUXURY HOUSE</div>
-          <h1>
-            L’allure est
-            <br />
-            une <em>signature.</em>
-          </h1>
-          <p>
-            Un regard singulier. Une élégance sans compromis.
-            <br />
-            Entrez dans l’univers GOAT’99.
-          </p>
+          {hasPublishedCollection(collections) && <span className="collection-badge"><span aria-hidden="true"/>Nouvelle collection</span>}
+          <div className="eyebrow">GOAT’99 · LA MAISON</div>
+          <h1>{copy.title}</h1>
+          <p>{copy.description}</p>
           <div className="hero-actions">
-            <Button variant="hero" asChild>
-              <Link to="/boutique">DÉCOUVRIR LA BOUTIQUE <ArrowRight /></Link>
+            <Button variant="hero" className="campaign-primary" asChild>
+              <Link to="/boutique">{copy.primary_label} <ArrowRight /></Link>
             </Button>
-            <Button variant="editorial" asChild>
-              <Link to="/$page" params={{ page: 'maison' }}>L’ESPRIT DE LA MAISON <ArrowRight /></Link>
+            <Button variant="editorial" className="campaign-secondary" asChild>
+              <Link to="/boutique" search={{ vedettes: true }}>{copy.secondary_label} <ArrowRight /></Link>
             </Button>
           </div>
+          <div className="campaign-signature"><span/>MODE · CRÉATION · ART DE VIVRE</div>
         </div>
-        <div className="campaign-caption">
-          <span>MODE · CRÉATION · ART DE VIVRE</span>
-          <span>EXPLORER LA MAISON <ArrowDown size={12} /></span>
+        <div className="campaign-visual">
+          <img src={campaign} width={1920} height={1088} alt="Vision éditoriale GOAT’99 : silhouette de couture noire dans une galerie de pierre" fetchPriority="high" />
+          <div className="campaign-image-caption"><span>GOAT’99</span><span>L’ALLURE, EN SIGNATURE.</span></div>
         </div>
       </section>
 
       {selection.length > 0 && (
-        <section className="section">
+        <section className="section" id="articles-en-vedette">
           <div className="section-heading">
             <div>
               <div className="eyebrow">ARTICLES EN VEDETTE</div>
